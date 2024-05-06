@@ -28,6 +28,7 @@ io.on("connection", (socket) => {
     // Send message to all users currently in the room, apart from the user that just joined
     socket.to(room).emit("receive_message", {
       message: `${name} has joined the chat room`,
+      room: room,
       username: CHAT_BOT,
       socket: socket.id,
       __createdtime__,
@@ -37,10 +38,15 @@ io.on("connection", (socket) => {
     // Send welcome msg to user that just joined chat only
     socket.emit("receive_message", {
       message: `Welcome ${name}`,
+      room: room,
       username: CHAT_BOT,
       socket: socket.id,
       __createdtime__,
     });
+  });
+
+  socket.on("sendMessage", (data) => {
+    io.to(data.room).emit("message", data);
   });
 });
 
